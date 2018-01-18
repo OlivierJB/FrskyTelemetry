@@ -38,6 +38,12 @@ For information on how to connect the FrSky equipment together, please refer to
  - http://ardupilot.org/copter/docs/common-frsky-telemetry.html#common-frsky-equipment
  - http://ardupilot.org/copter/docs/common-frsky-telemetry.html#frsky-cables
 
+## Installation
+
+The script is quite big and compilation on your radio may fail.
+The safest way is to compile it on Companion and then copy the .luac compiled version to the SD card in the /SCRIPTS/TELEMETRY folder.
+To enable sound files playback copy them to /SOUNDS/yaapu0/en folder.
+
 ## Notes
 
 Speech sound files generated with https://soundoftext.com/
