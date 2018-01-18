@@ -1,6 +1,7 @@
 # Yaapu Frsky Telemetry script
 
-A lua based telemetry script for the Taranis X9D+ and X7 radio using the frsky passthrough protocol, requires OpenTX 2.2 and arducopter 3.5.x.
+A lua based telemetry script for the Taranis X9D+ and X7 radio using the frsky passthrough protocol.
+Requires OpenTX 2.2 and arducopter 3.5.x.
 
 Tested on a pixracer with copter 3.5.3 and on a pixhawk clone with copter 3.5.4
 
@@ -28,7 +29,15 @@ Tested on a pixracer with copter 3.5.3 and on a pixhawk clone with copter 3.5.4
  - home distance
  - home heading as rotating triangle
  - mavlink messages with history accessible with +/- buttons short press
- 
+ - english sound files for selected events: battery levels, failsafe, flightmode and landing
+
+## Installation
+
+The script is quite big and compilation on your radio may fail.
+The safest way is to compile it on Companion and then copy the .luac compiled version to the SD card in the /SCRIPTS/TELEMETRY folder.
+
+To enable sound files playback copy them to /SOUNDS/yaapu0/en folder.
+
 ## Hardware requirements
 
 Please refer to the arducopter wiki for information on how to configure your flight controller for passthrough protocol
@@ -41,4 +50,5 @@ For information on how to connect the FrSky equipment together, please refer to
 ## Notes
 
 Speech sound files generated with https://soundoftext.com/
+
 As of now only english is supported
