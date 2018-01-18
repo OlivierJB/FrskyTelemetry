@@ -194,7 +194,7 @@ local function pushMessage(severity, msg)
 			end
 		end
 	else
-		messageHistory[messageIdx] = string.format("[%02d:%s] %s", messageIdx, mavSeverity[severity], msg)
+		messageHistory[messageIdx] = string.format("%d.%s %s", messageIdx, mavSeverity[severity], msg)
 		messageIdx = messageIdx + 1
 		lastMessage = msg
 		messageDuplicate = 1
