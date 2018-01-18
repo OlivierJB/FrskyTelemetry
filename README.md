@@ -11,6 +11,7 @@ Tested on a pixracer with copter 3.5.3 and on a pixhawk clone with copter 3.5.4
 
 ## Features
 
+ - flight mode
  - artificial horizon with roll,pitch and yaw with numeric compass heading
  - battery voltage from 3 sources (in order of priority)
  - - frsky FLVSS voltage sensor if available (vs is displayed next to voltage)
@@ -29,7 +30,7 @@ Tested on a pixracer with copter 3.5.3 and on a pixhawk clone with copter 3.5.4
  - home distance
  - home heading as rotating triangle
  - mavlink messages with history accessible with +/- buttons short press
- - english sound files for selected events: battery levels, failsafe, flightmode and landing
+ - english sound files for selected events: battery levels, failsafe, flightmodes and landing
 
 ## Installation
 
