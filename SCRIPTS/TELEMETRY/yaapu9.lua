@@ -161,7 +161,7 @@ local battFailsafeCapacity = 0
 local battCapacity = 0
 --
 local minX = 0
-local maxX = 70
+local maxX = 76
 local minY = 9
 local maxY = 55
 --
@@ -515,35 +515,37 @@ local function drawBattery()
 
 	-- display lowest cell voltage
 	if LIPOcelm < 350 then
-		lcd.drawNumber(maxX + 60, 10, LIPOcelm, DBLSIZE+BLINK+PREC2)    
+		lcd.drawNumber(maxX + 57, 10, LIPOcelm, DBLSIZE+BLINK+PREC2)    
 		lcd.drawText(lcd.getLastRightPos(), 10, "Vm", SMLSIZE+BLINK)
 	else
-		lcd.drawNumber(maxX + 60, 10, LIPOcelm, DBLSIZE+PREC2)      
+		lcd.drawNumber(maxX + 57, 10, LIPOcelm, DBLSIZE+PREC2)      
 		lcd.drawText(lcd.getLastRightPos(), 10, "Vm", SMLSIZE)
 	end
 
-	lcd.drawNumber(maxX + 105, 10, battCurrent, DBLSIZE+PREC1)
+	lcd.drawNumber(maxX + 101, 10, battCurrent, DBLSIZE+PREC1)
 	lcd.drawText(lcd.getLastRightPos(), 10, "A", SMLSIZE)
 
-	lcd.drawNumber(maxX + 7, 28, LIPOperc, 0)       
-	lcd.drawText(lcd.getLastRightPos(), 28, "%", SMLSIZE)
+	local barOffset = maxX + 20
+
+	lcd.drawText(barOffset - 2, 28, "%", SMLSIZE+RIGHT)
+	lcd.drawNumber(lcd.getLastLeftPos(), 28, LIPOperc, RIGHT)       
 
 	-- display capacity bar %
-	lcd.drawGauge(maxX + 24, 28, 63, 7, LIPOperc, 100)
+	lcd.drawGauge(barOffset, 28, 63, 7, LIPOperc, 100)
 
 	lcd.drawText(212, 28, "Ah", SMLSIZE+RIGHT)
 	lcd.drawNumber(lcd.getLastLeftPos(), 28, battCapacity/100, SMLSIZE+PREC1+RIGHT)  
 	lcd.drawText(lcd.getLastLeftPos(), 28, "/", SMLSIZE+RIGHT)
 	lcd.drawNumber(lcd.getLastLeftPos(), 28, battMah/100, SMLSIZE+PREC1+RIGHT)  
 
-	lcd.drawPoint(maxX + 39, 28)
-	lcd.drawPoint(maxX + 39, 34)
+	lcd.drawPoint(barOffset + 15, 28)
+	lcd.drawPoint(barOffset + 15, 34)
 
-	lcd.drawPoint(maxX + 55, 28)
-	lcd.drawPoint(maxX + 55, 34)        
+	lcd.drawPoint(barOffset + 31, 28)
+	lcd.drawPoint(barOffset + 31, 34)        
 
-	lcd.drawPoint(maxX + 71, 28)
-	lcd.drawPoint(maxX + 71, 34)
+	lcd.drawPoint(barOffset + 47, 28)
+	lcd.drawPoint(barOffset + 47, 34)
 end
 
 local function drawFlightMode()
@@ -565,16 +567,16 @@ local function drawFlightMode()
 	end
 
 	if (statusArmed == 1) then
-		lcd.drawText(21, 47, "ARMED", SMLSIZE+INVERS)
+		lcd.drawText(maxX/2 - 12, 47, "ARMED", SMLSIZE+INVERS)
 	else
-		lcd.drawText(16, 47, "DISARMED", SMLSIZE+INVERS+BLINK)
+		lcd.drawText(maxX/2 - 18, 47, "DISARMED", SMLSIZE+INVERS+BLINK)
 	end
 end
 
 local function drawHome()
-	local xx = 150
+	local xx = maxX + 76
 	local yy = 39
-	local ax = xx - 45
+	local ax = xx - 43
 	local ay = 42
 	local alen = 10
 	--
@@ -595,7 +597,7 @@ local function drawHome()
 		lcd.drawNumber(lcd.getLastLeftPos(), yy, homeDist, SMLSIZE+RIGHT)
 		lcd.drawNumber(xx, yy + 8, homeAngle, SMLSIZE+RIGHT)
 	end
-	lcd.drawText(xx - 45, yy + 8, "Angle:",SMLSIZE)
+	lcd.drawText(ax, yy + 8, "Angle:",SMLSIZE)
 end
 
 local function drawMessage()
@@ -647,20 +649,20 @@ local function drawGPSStatus()
 		else
 			lcd.drawNumber(212, yy+10, gpsHdopC , SMLSIZE+INVERS+RIGHT+PREC1+flags)
 		end
-		lcd.drawText(100, 40, "AltAsl", SMLSIZE+RIGHT)
-		lcd.drawText(100, 47, "m", SMLSIZE+RIGHT)
+		lcd.drawText(maxX + 30, 40, "AltAsl", SMLSIZE+RIGHT)
+		lcd.drawText(maxX + 30, 47, "m", SMLSIZE+RIGHT)
 		lcd.drawNumber(lcd.getLastLeftPos(), 47, gpsAlt/10, SMLSIZE+RIGHT)
 	else
 		lcd.drawText(xx+5, yy+5, strStatus, INVERS+BLINK)
-		lcd.drawText(100, 40, "AltAsl", SMLSIZE+RIGHT)
-		lcd.drawText(100, 47, "m", SMLSIZE+RIGHT+BLINK)
+		lcd.drawText(maxX + 30, 40, "AltAsl", SMLSIZE+RIGHT)
+		lcd.drawText(maxX + 30, 47, "m", SMLSIZE+RIGHT+BLINK)
 		lcd.drawNumber(lcd.getLastLeftPos(), 47, 0, SMLSIZE+RIGHT+BLINK)
 	end
 end
 
 local function drawGrid()
 	lcd.drawLine(maxX, 0, maxX, 63, SOLID, 0)
-	lcd.drawRectangle(maxX,38,32,18,SOLID)
+	lcd.drawRectangle(maxX,38,31,18,SOLID)
 end
 
 local timerRunning = 0
@@ -832,7 +834,7 @@ local function drawRoll()
 	drawCroppedLine(dx + x - cccx,dy + 32 + cccy,r,5,DOTTED,maxX,maxY)
 	drawCroppedLine(dx + x - ccx,dy + 32 + ccy,r,7,DOTTED,maxX,maxY)
 	drawCroppedLine(dx + x - cx,dy + 32 + cy,r,10,DOTTED,maxX,maxY)
-	drawCroppedLine(dx + x,dy + 32,r,22,SOLID,maxX,maxY)
+	drawCroppedLine(dx + x,dy + 32,r,28,SOLID,maxX,maxY)
 	drawCroppedLine(dx + x + cx,dy + 32 - cy,r,10,DOTTED,maxX,maxY)
 	drawCroppedLine(dx + x + ccx,dy + 32 - ccy,r,7,DOTTED,maxX,maxY)
 	drawCroppedLine(dx + x + cccx,dy + 32 - cccy,r,5,DOTTED,maxX,maxY)
@@ -922,7 +924,7 @@ local function drawHud()
 end
 
 local function drawHomeDirection()
-	local ox = 162
+	local ox = 163
 	local oy = 46
 	local angle = math.floor(yaw - homeAngle)
 	if ( math.abs(angle) > 45 and math.abs(angle) < 315) then
@@ -944,8 +946,8 @@ local function drawHomeDirection()
 end
 
 local function drawFlightTime()
-	lcd.drawText(100, 1, "T:", SMLSIZE+INVERS)
-	lcd.drawTimer(lcd.getLastRightPos(), 1, flightTime, SMLSIZE+INVERS)
+	lcd.drawText(maxX + 1, 1, "T:", SMLSIZE+INVERS)
+	lcd.drawTimer(lcd.getLastRightPos()+1, 1, flightTime, SMLSIZE+INVERS)
 end
 
 local function drawRSSI()
@@ -958,9 +960,9 @@ local function drawTxVoltage()
 	txVId=getFieldInfo("tx-voltage").id
 	txV = getValue(txVId)*10  
 
-	lcd.drawText(147, 1, "Tx:", SMLSIZE+INVERS)
+	lcd.drawText(150, 1, "Tx:", SMLSIZE+INVERS)
 	lcd.drawNumber(lcd.getLastRightPos(), 1, txV, SMLSIZE+INVERS+PREC1)
-	lcd.drawText(lcd.getLastRightPos(), 1, "V", SMLSIZE+INVERS)
+	lcd.drawText(lcd.getLastRightPos(), 1, "v", SMLSIZE+INVERS)
 end
 
 local lastStatusArmed = 0
