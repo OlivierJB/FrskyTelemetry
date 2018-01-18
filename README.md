@@ -47,6 +47,41 @@ For information on how to connect the FrSky equipment together, please refer to
  - http://ardupilot.org/copter/docs/common-frsky-telemetry.html#common-frsky-equipment
  - http://ardupilot.org/copter/docs/common-frsky-telemetry.html#frsky-cables
 
+## Test Mode
+
+The script can be run in TEST mode. By using TEST mode you can control the telemetry values by moving the radio sticks.
+
+PLEASE DO NOT FLY IN THIS MODE
+
+To enable TEST mode you need to uncomment some code and recompile the script.
+
+the first change is in function telemetryEnabled which should be as below
+
+```lua
+local function telemetryEnabled()
+	if getValue("RxBt") == 0 then
+		noTelemetryData = 1
+	end
+	return true
+	--return noTelemetryData == 0
+end
+```
+
+the second part that needs to be changed is in the run() function where the line symMode() must be uncommented
+
+```lua
+local function run(event) 
+   ...
+			processTelemetry()
+			lcd.clear()
+			symMode()
+			drawHud()
+			drawGrid()
+			drawBattery()
+   ...
+```
+Now you can test how the script behaves by using your radio channels 1,2,3,4,10 and 12.
+
 ## Notes
 
 Speech sound files generated with https://soundoftext.com/
