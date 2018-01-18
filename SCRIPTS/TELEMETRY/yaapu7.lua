@@ -400,8 +400,8 @@ local function telemetryEnabled()
 	if getValue("RxBt") == 0 then
 		noTelemetryData = 1
 	end
-	--return true
-	return noTelemetryData == 0
+	return true
+	--return noTelemetryData == 0
 end
 
 local battSource = "na"
@@ -1015,7 +1015,7 @@ local function run(event)
 		do
 			processTelemetry()
 			lcd.clear()
-			--symMode()
+			symMode()
 			drawHud()
 			drawGrid()
 			drawBattery()
