@@ -866,7 +866,7 @@ end
 local function drawHomeDirection()
 	local ox = maxX + 14
 	local oy = 41
-	local angle = math.floor(homeAngle - yaw)
+	local angle = math.floor( yaw - homeAngle)
 	if ( math.abs(angle) > 45 and math.abs(angle) < 315) then
 		oy = 39
 	end
