@@ -126,6 +126,10 @@ local gpsAlt = 0
 local battVolt = 0
 local battCurrent = 0
 local battMah = 0
+-- BATT2
+local battVolt2 = 0
+local battCurrent2 = 0
+local battMah2 = 0
 -- HOME
 local homeDist = 0
 local homeAlt = 0
@@ -356,6 +360,10 @@ local function processTelemetry()
 			battVolt = bit32.extract(VALUE,0,9)
 			battCurrent = bit32.extract(VALUE,10,7) * (10^bit32.extract(VALUE,9,1))
 			battMah = bit32.extract(VALUE,17,15)
+		elseif ( DATA_ID == 0x5008) then -- BATT2 
+			battVolt2 = bit32.extract(VALUE,0,9)
+			battCurrent2 = bit32.extract(VALUE,10,7) * (10^bit32.extract(VALUE,9,1))
+			battMah2 = bit32.extract(VALUE,17,15)
 		elseif ( DATA_ID == 0x5004) then -- HOME 
 			homeDist = bit32.extract(VALUE,2,10) * (10^bit32.extract(VALUE,0,2))
 			homeAlt = bit32.extract(VALUE,14,10) * (10^bit32.extract(VALUE,12,2)) * 0.1
