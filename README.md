@@ -1,6 +1,7 @@
 # Yaapu Frsky Telemetry script
 
 A lua based telemetry script for the Taranis X9D+ and X7 radio using the frsky passthrough protocol.
+
 Requires OpenTX 2.2 and a recent release of arducoper, arduplane or rover.
 
 Tested on a pixracer with copter 3.5.3 and on a pixhawk clone with copter 3.5.4
