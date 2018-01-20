@@ -32,29 +32,246 @@ local i, cellmin, cellresult = 0, cellfull, 0, 0
 local thrOut = 0
 local voltage = 0
 
+--[[
+	MAV_TYPE_GENERIC=0, /* Generic micro air vehicle. | */
+	MAV_TYPE_FIXED_WING=1, /* Fixed wing aircraft. | */
+	MAV_TYPE_QUADROTOR=2, /* Quadrotor | */
+	MAV_TYPE_COAXIAL=3, /* Coaxial helicopter | */
+	MAV_TYPE_HELICOPTER=4, /* Normal helicopter with tail rotor. | */
+	MAV_TYPE_ANTENNA_TRACKER=5, /* Ground installation | */
+	MAV_TYPE_GCS=6, /* Operator control unit / ground control station | */
+	MAV_TYPE_AIRSHIP=7, /* Airship, controlled | */
+	MAV_TYPE_FREE_BALLOON=8, /* Free balloon, uncontrolled | */
+	MAV_TYPE_ROCKET=9, /* Rocket | */
+	MAV_TYPE_GROUND_ROVER=10, /* Ground rover | */
+	MAV_TYPE_SURFACE_BOAT=11, /* Surface vessel, boat, ship | */
+	MAV_TYPE_SUBMARINE=12, /* Submarine | */
+	MAV_TYPE_HEXAROTOR=13, /* Hexarotor | */
+	MAV_TYPE_OCTOROTOR=14, /* Octorotor | */
+	MAV_TYPE_TRICOPTER=15, /* Tricopter | */
+	MAV_TYPE_FLAPPING_WING=16, /* Flapping wing | */
+	MAV_TYPE_KITE=17, /* Kite | */
+	MAV_TYPE_ONBOARD_CONTROLLER=18, /* Onboard companion controller | */
+	MAV_TYPE_VTOL_DUOROTOR=19, /* Two-rotor VTOL using control surfaces in vertical operation in addition. Tailsitter. | */
+	MAV_TYPE_VTOL_QUADROTOR=20, /* Quad-rotor VTOL using a V-shaped quad config in vertical operation. Tailsitter. | */
+	MAV_TYPE_VTOL_TILTROTOR=21, /* Tiltrotor VTOL | */
+	MAV_TYPE_VTOL_RESERVED2=22, /* VTOL reserved 2 | */
+	MAV_TYPE_VTOL_RESERVED3=23, /* VTOL reserved 3 | */
+	MAV_TYPE_VTOL_RESERVED4=24, /* VTOL reserved 4 | */
+	MAV_TYPE_VTOL_RESERVED5=25, /* VTOL reserved 5 | */
+	MAV_TYPE_GIMBAL=26, /* Onboard gimbal | */
+	MAV_TYPE_ADSB=27, /* Onboard ADSB peripheral | */
+	MAV_TYPE_PARAFOIL=28, /* Steerable, nonrigid airfoil | */
+	MAV_TYPE_DODECAROTOR=29, /* Dodecarotor | */
+]]--
+
+local frameTypes = {}
+	frameTypes[0] = "copter"
+	frameTypes[1] = "plane"
+	frameTypes[2] = "copter"
+	frameTypes[3] = "copter"
+	frameTypes[4] = "copter"
+	frameTypes[5] = ""
+	frameTypes[6] = ""
+	frameTypes[7] = ""
+	frameTypes[8] = ""
+	frameTypes[9] = ""
+	frameTypes[10] = "rover"
+	frameTypes[11] = "boat"
+	frameTypes[12] = ""
+	frameTypes[13] = "copter"
+	frameTypes[14] = "copter"
+	frameTypes[15] = "copter"
+	frameTypes[16] = "plane"
+	frameTypes[17] = ""
+	frameTypes[18] = ""
+	frameTypes[19] = "plane"
+	frameTypes[20] = "plane"
+	frameTypes[21] = "plane"
+	frameTypes[22] = "plane"
+	frameTypes[23] = "plane"
+	frameTypes[24] = "plane"
+	frameTypes[25] = "plane"
+	frameTypes[26] = ""
+	frameTypes[27] = ""
+	frameTypes[28] = "plane"
+	frameTypes[29] = "copter"
+	frameTypes[30] = ""
+
 local flightModes = {}
-  flightModes[0]=""
-  flightModes[1]="Stabilize"
-  flightModes[2]="Acro"
-  flightModes[3]="AltHold"
-  flightModes[4]="Auto"
-  flightModes[5]="Guided"
-  flightModes[6]="Loiter"
-  flightModes[7]="RTL"
-  flightModes[8]="Circle"
-  flightModes[9]=""
-  flightModes[10]="Land"
-  flightModes[11]=""
-  flightModes[12]="Drift"
-  flightModes[13]=""
-  flightModes[14]="Sport"
-  flightModes[15]="Flip"
-  flightModes[16]="AutoTune"
-  flightModes[17]="PosHold"
-  flightModes[18]="Brake"
-  flightModes[19]="Throw"
-  flightModes[20]="Avoid"
-  flightModes[21]="GuiNGPS"
+	flightModes["copter"] = {}
+	flightModes["plane"] = {}
+	flightModes["rover"] = {}	
+	-- copter flight modes
+	flightModes["copter"][0]=""
+	flightModes["copter"][1]="Stabilize"
+	flightModes["copter"][2]="Acro"
+	flightModes["copter"][3]="AltHold"
+	flightModes["copter"][4]="Auto"
+	flightModes["copter"][5]="Guided"
+	flightModes["copter"][6]="Loiter"
+	flightModes["copter"][7]="RTL"
+	flightModes["copter"][8]="Circle"
+	flightModes["copter"][9]=""
+	flightModes["copter"][10]="Land"
+	flightModes["copter"][11]=""
+	flightModes["copter"][12]="Drift"
+	flightModes["copter"][13]=""
+	flightModes["copter"][14]="Sport"
+	flightModes["copter"][15]="Flip"
+	flightModes["copter"][16]="AutoTune"
+	flightModes["copter"][17]="PosHold"
+	flightModes["copter"][18]="Brake"
+	flightModes["copter"][19]="Throw"
+	flightModes["copter"][20]="Avoid ADSB"
+	flightModes["copter"][21]="Guided NO GPS"
+	-- plane flight modes
+	flightModes["plane"][0]="Manual"
+	flightModes["plane"][1]="Circle"
+	flightModes["plane"][2]="Stabilize"
+	flightModes["plane"][3]="Training"
+	flightModes["plane"][4]="Acro"
+	flightModes["plane"][5]="FlyByWireA"
+	flightModes["plane"][6]="FlyByWireB"
+	flightModes["plane"][7]="Cruise"
+	flightModes["plane"][8]="Autotune"
+	flightModes["plane"][9]=""
+	flightModes["plane"][10]="Auto"
+	flightModes["plane"][11]="RTL"
+	flightModes["plane"][12]="Loiter"
+	flightModes["plane"][13]=""
+	flightModes["plane"][14]="Avoid ADSB"
+	flightModes["plane"][15]="Guided"
+	flightModes["plane"][16]="Initializing"
+	flightModes["plane"][17]="QStabilize"
+	flightModes["plane"][18]="QHover"
+	flightModes["plane"][19]="QLoiter"
+	flightModes["plane"][20]="Qland"
+	flightModes["plane"][21]="QRTL"
+	-- rover flight modes
+	flightModes["rover"][0]="Manual"
+	flightModes["rover"][1]="Acro"
+	flightModes["rover"][2]=""
+	flightModes["rover"][3]="Steering"
+	flightModes["rover"][4]="Hold"
+	flightModes["rover"][5]=""
+	flightModes["rover"][6]=""
+	flightModes["rover"][7]=""
+	flightModes["rover"][8]=""
+	flightModes["rover"][9]=""
+	flightModes["rover"][10]="Auto"
+	flightModes["rover"][11]="RTL"
+	flightModes["rover"][12]="SmartRTL"
+	flightModes["rover"][13]=""
+	flightModes["rover"][14]=""
+	flightModes["rover"][15]="Guided"
+	flightModes["rover"][16]="Initializing"
+	flightModes["rover"][17]=""
+	flightModes["rover"][18]=""
+	flightModes["rover"][19]=""
+	flightModes["rover"][20]=""
+	flightModes["rover"][21]=""
+
+local soundFileBasePath = "/SOUNDS/yaapu0/en"
+local soundFiles = {}
+	-- battery
+	soundFiles["bat5"] = "bat5.wav"
+	soundFiles["bat10"] = "bat10.wav"
+	soundFiles["bat15"] = "bat15.wav"
+	soundFiles["bat20"] = "bat20.wav"
+	soundFiles["bat25"] = "bat25.wav"
+	soundFiles["bat30"] = "bat30.wav"
+	soundFiles["bat40"] = "bat40.wav"
+	soundFiles["bat50"] = "bat50.wav"
+	soundFiles["bat60"] = "bat60.wav"	
+	soundFiles["bat70"] = "bat70.wav"
+	soundFiles["bat80"] = "bat80.wav"
+	soundFiles["bat90"] = "bat90.wav"	
+	-- gps
+	soundFiles["gpsfix"] = "gpsfix.wav"
+	soundFiles["gpsnofix"] = "gpsnofix.wav"
+	-- failsafe
+	soundFiles["lowbat"] = "lowbat.wav"
+	soundFiles["ekf"] = "ekf.wav"
+	-- events
+	soundFiles["yaapu"] = "yaapu.wav"
+	soundFiles["landing"] = "landing.wav"
+	soundFiles["armed"] = "armed.wav"
+	soundFiles["disarmed"] = "disarmed.wav"
+
+local soundFilesByFrameTypeAndFlightMode = {}
+	soundFilesByFrameTypeAndFlightMode["copter"] = {}
+	soundFilesByFrameTypeAndFlightMode["plane"] = {}
+	soundFilesByFrameTypeAndFlightMode["rover"] = {}
+	-- Copter
+	soundFilesByFrameTypeAndFlightMode["copter"][0]=""
+	soundFilesByFrameTypeAndFlightMode["copter"][1]="stabilize.wav"	
+	soundFilesByFrameTypeAndFlightMode["copter"][2]="acro.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][3]="althold.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][4]="auto.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][5]="guided.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][6]="loiter.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][7]="rtl.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][8]="circle.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][9]=""
+	soundFilesByFrameTypeAndFlightMode["copter"][10]="land.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][11]=""
+	soundFilesByFrameTypeAndFlightMode["copter"][12]="drift.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][13]=""
+	soundFilesByFrameTypeAndFlightMode["copter"][14]="sport.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][15]="flip.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][16]="loiter.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][17]="poshold.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][18]="brake"
+	soundFilesByFrameTypeAndFlightMode["copter"][19]="throw.wav"
+	soundFilesByFrameTypeAndFlightMode["copter"][20]="avoidadbs"
+	soundFilesByFrameTypeAndFlightMode["copter"][21]="guidednogps"
+	-- Plane
+	soundFilesByFrameTypeAndFlightMode["plane"][0]="manual.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][1]="circle.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][2]="stabilize.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][3]="training.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][4]="acro.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][5]="flybywirea.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][6]="flybywireb.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][7]="cruise.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][8]="autotune.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][9]=""
+	soundFilesByFrameTypeAndFlightMode["plane"][10]="auto.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][11]="rtl.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][12]="loiter.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][13]=""
+	soundFilesByFrameTypeAndFlightMode["plane"][14]="avoidadbs"
+	soundFilesByFrameTypeAndFlightMode["plane"][15]="guided.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][16]="initializing.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][17]="qstabilize.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][18]="qhover.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][19]="qloiter.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][20]="qland.wav"
+	soundFilesByFrameTypeAndFlightMode["plane"][21]="qrtl.wav"
+	-- Rover
+	soundFilesByFrameTypeAndFlightMode["rover"][0]="manual_r.wav"
+	soundFilesByFrameTypeAndFlightMode["rover"][1]="acro_r.wav"
+	soundFilesByFrameTypeAndFlightMode["rover"][2]=""
+	soundFilesByFrameTypeAndFlightMode["rover"][3]="steering_r.wav"
+	soundFilesByFrameTypeAndFlightMode["rover"][4]="hold_r.wav"
+	soundFilesByFrameTypeAndFlightMode["rover"][5]=""
+	soundFilesByFrameTypeAndFlightMode["rover"][6]=""
+	soundFilesByFrameTypeAndFlightMode["rover"][7]=""
+	soundFilesByFrameTypeAndFlightMode["rover"][8]=""
+	soundFilesByFrameTypeAndFlightMode["rover"][9]=""
+	soundFilesByFrameTypeAndFlightMode["rover"][10]="auto_r.wav"
+	soundFilesByFrameTypeAndFlightMode["rover"][11]="rtl_r.wav"
+	soundFilesByFrameTypeAndFlightMode["rover"][12]="smartrtl_r.wav"
+	soundFilesByFrameTypeAndFlightMode["rover"][13]=""
+	soundFilesByFrameTypeAndFlightMode["rover"][14]=""
+	soundFilesByFrameTypeAndFlightMode["rover"][15]="guided_r.wav"
+	soundFilesByFrameTypeAndFlightMode["rover"][16]="initializing.wav"
+	soundFilesByFrameTypeAndFlightMode["rover"][17]=""
+	soundFilesByFrameTypeAndFlightMode["rover"][18]=""
+	soundFilesByFrameTypeAndFlightMode["rover"][19]=""
+	soundFilesByFrameTypeAndFlightMode["rover"][20]=""
+	soundFilesByFrameTypeAndFlightMode["rover"][21]=""
 
 local gpsStatuses = {}
   gpsStatuses[0]="NoGPS"
@@ -71,41 +288,6 @@ local mavSeverity = {}
   mavSeverity[5]="NOT"
   mavSeverity[6]="INF"
   mavSeverity[7]="DBG"
-
-local soundFileBasePath = "/SOUNDS/yaapu0/en"
-local soundFiles = {}
-	-- battery
-	soundFiles["bat5"] = "bat5.wav"
-	soundFiles["bat10"] = "bat10.wav"
-	soundFiles["bat15"] = "bat15.wav"
-	soundFiles["bat20"] = "bat20.wav"
-	soundFiles["bat25"] = "bat25.wav"
-	soundFiles["bat30"] = "bat30.wav"
-	soundFiles["bat40"] = "bat40.wav"
-	soundFiles["bat50"] = "bat50.wav"
-	soundFiles["bat60"] = "bat60.wav"
-	soundFiles["bat75"] = "bat75.wav"
-	-- gps
-	soundFiles["gpsfix"] = "gpsfix.wav"
-	soundFiles["gpsnofix"] = "gpsnofix.wav"
-	-- failsafe
-	soundFiles["lowbat"] = "lowbat.wav"
-	soundFiles["ekf"] = "ekf.wav"
-	-- events
-	soundFiles["yaapu"] = "yaapu.wav"
-	soundFiles["landing"] = "landing.wav"
-	soundFiles["armed"] = "armed.wav"
-	soundFiles["disarmed"] = "disarmed.wav"
-	-- events
-	soundFiles["land"] = "land.wav"	
-	soundFiles["auto"] = "auto.wav"
-	soundFiles["stabilize"] = "stabilize.wav"	
-	soundFiles["althold"] = "althold.wav"
-	soundFiles["poshold"] = "poshold.wav"
-	soundFiles["loiter"] = "loiter.wav"
-	soundFiles["autotune"] = "autotune.wav"	
-	soundFiles["rtl"] = "rtl.wav"
-	soundFiles["autotune"] = "autotune.wav"	
 
   -- STATUS
 local flightMode = 0
@@ -156,7 +338,7 @@ local mult = 0
 local c1,c2,c3,c4
 -- PARAMS
 local paramId,paramValue
-local frameType
+local frameType = 2
 local battFailsafeVoltage = 0
 local battFailsafeCapacity = 0
 local battCapacity = 0
@@ -170,6 +352,10 @@ local noTelemetryData = 1
 
 local function playSound(soundFile)
 	playFile(soundFileBasePath .. "/" .. soundFiles[soundFile])
+end
+
+local function playSoundByFrameTypeAndFlightMode(frameType,flightMode)
+	playFile(soundFileBasePath .. "/" .. soundFilesByFrameTypeAndFlightMode[frameTypes[frameType]][flightMode])
 end
 
 local function getValueOrDefault(value)
@@ -218,6 +404,17 @@ local function stopTimer()
 	lastTimerStart = 0
 end
 
+local function symFrameType()
+	local ch11 = getValue("ch11")
+	if (ch11 < -300) then
+		frameType = 2
+	elseif ch11 < 300 then
+		frameType = 1
+	else
+		frameType = 10
+	end
+end
+
 local function symTimer()
 	thrOut = getValue("thr")
 	if (thrOut > -500 ) then
@@ -262,10 +459,10 @@ local function symBatt()
 		battVolt = LIPObatt*0.1
 		battCapacity = 10500
 		battMah = 5200
-		flightMode = 1
 		statusArmed = 1
 		simpleMode = 1
 		homeDist = math.abs(thrOut)*2
+		flightMode = math.floor(20*math.abs(thrOut)*0.001)
 	end
 end
 
@@ -524,7 +721,7 @@ local function drawFlightMode()
 		return
 	end
 
-	local strMode = flightModes[flightMode]
+	local strMode = flightModes[frameTypes[frameType]][flightMode]
 	--
 	lcd.drawText(1, 1, strMode, SMLSIZE+INVERS)
 
@@ -535,7 +732,7 @@ local function drawFlightMode()
 	if (statusArmed == 1) then
 		lcd.drawText(18, 47, "ARMED", SMLSIZE+INVERS)
 	else
-		lcd.drawText(18, 47, "DISARMED", SMLSIZE+INVERS+BLINK)
+		lcd.drawText(12, 47, "DISARMED", SMLSIZE+INVERS+BLINK)
 	end
 end
 
@@ -921,18 +1118,20 @@ local lastFlightMode = 0
 local lastBattLevel = 0
 local batLevel = 99
 local batLevels = {}
-	batLevels[10]=0
-	batLevels[9]=5
-	batLevels[8]=10
-	batLevels[7]=15
-	batLevels[6]=20
-	batLevels[5]=25
-	batLevels[4]=30
-	batLevels[3]=40
-	batLevels[2]=50
-	batLevels[1]=60
-	batLevels[0]=75
-	
+	batLevels[12]=0
+	batLevels[11]=5
+	batLevels[10]=10
+	batLevels[9]=15
+	batLevels[8]=20
+	batLevels[7]=25
+	batLevels[6]=30
+	batLevels[5]=40
+	batLevels[4]=50
+	batLevels[3]=60
+	batLevels[2]=70
+	batLevels[1]=80
+	batLevels[0]=90
+
 local function checkSoundEvents()
 	if (battCapacity > 0) then
 		batLevel = (1 - (battMah/battCapacity))*100
@@ -940,11 +1139,11 @@ local function checkSoundEvents()
 		batLevel = 99
 	end
 
-	if batLevel < (batLevels[lastBattLevel] + 1) and lastBattLevel <= 9 then
+	if batLevel < (batLevels[lastBattLevel] + 1) and lastBattLevel <= 11 then
 		playSound("bat"..batLevels[lastBattLevel])
 		lastBattLevel = lastBattLevel + 1
 	end
-	
+
 	if statusArmed == 1 and lastStatusArmed == 0 then
 		lastStatusArmed = statusArmed
 		playSound("armed")
@@ -963,23 +1162,7 @@ local function checkSoundEvents()
 
 	if flightMode ~= lastFlightMode then
 		lastFlightMode = flightMode
-		if flightMode == 1 then
-			playSound("stabilize")
-		elseif flightMode == 3 then
-			playSound("althold")
-		elseif flightMode == 4 then
-			playSound("auto")
-		elseif flightMode == 6 then
-			playSound("loiter")
-		elseif flightMode == 7 then
-			playSound("rtl")
-		elseif flightMode == 10 then
-			playSound("land")
-		elseif flightMode == 16 then
-			playSound("autotune")
-		elseif flightMode == 17 then
-			playSound("poshold")
-		end	
+		playSoundByFrameTypeAndFlightMode(frameType,flightMode)
 	end
 end
 --------------------------------------------------------------------------------
@@ -1000,6 +1183,7 @@ local function symMode()
 	symHome()
 	symGPS()
 	symBatt()
+	symFrameType()
 end
 --
 local function run(event) 
@@ -1043,7 +1227,8 @@ local function run(event)
 end
 
 local function init()
-	pushMessage(6,"Yaapu X7 script v1.0")
+	pushMessage(6,"Yaapu X7 script v1.1")
+	playSound("yaapu")
 end
 
 --------------------------------------------------------------------------------
