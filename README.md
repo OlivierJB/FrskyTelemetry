@@ -1,7 +1,7 @@
 # Yaapu Frsky Telemetry script
 
 A lua based telemetry script for the Taranis X9D+ and X7 radio using the frsky passthrough protocol.
-Requires OpenTX 2.2 and arducopter 3.5.x.
+Requires OpenTX 2.2 and a recent release of arducoper, arduplane or rover.
 
 Tested on a pixracer with copter 3.5.3 and on a pixhawk clone with copter 3.5.4
 
@@ -11,7 +11,7 @@ Tested on a pixracer with copter 3.5.3 and on a pixhawk clone with copter 3.5.4
 
 ## Features
 
- - flight mode
+ - flight mode (modes are displayed based on the frame type:copter,plane or rover)
  - artificial horizon with roll,pitch and yaw with numeric compass heading
  - battery voltage from 3 sources (in order of priority)
  - - frsky FLVSS voltage sensor if available (vs is displayed next to voltage)
